@@ -1,0 +1,68 @@
+# QuickJS Makefile for PowerPC Mac OS X Tiger
+# Adapted for G4 (7450) with AltiVec
+#
+# Build on G4: make -f Makefile.ppc
+
+CC=gcc
+AR=ar
+STRIP=strip
+
+# PowerPC G4 flags
+CFLAGS=-I. -mcpu=7450 -maltivec -O2 -Wall -D_GNU_SOURCE
+CFLAGS+=-DCONFIG_BIGNUM
+CFLAGS+=-DCONFIG_VERSION=\"2024-01-13-ppc\"
+# Disable features not available on Tiger/Leopard
+CFLAGS+=-include tiger_compat.h
+
+# Tiger compatibility
+CFLAGS+=-mmacosx-version-min=10.4
+LDFLAGS=-mmacosx-version-min=10.4
+
+# Disable LTO on old GCC
+# CFLAGS+=-flto
+
+LIBS=-lm
+
+PROGS=qjs qjsc
+
+# Object files
+QJS_OBJS=qjs.o quickjs.o libregexp.o libunicode.o cutils.o quickjs-libc.o libbf.o
+QJSC_OBJS=qjsc.o quickjs.o libregexp.o libunicode.o cutils.o quickjs-libc.o libbf.o
+
+all: $(PROGS)
+
+qjs: $(QJS_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(QJS_OBJS) $(LIBS)
+	@echo "Built qjs for PowerPC G4"
+
+qjsc: $(QJSC_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(QJSC_OBJS) $(LIBS)
+	@echo "Built qjsc for PowerPC G4"
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+# Dependencies
+quickjs.o: quickjs.c quickjs.h quickjs-atom.h quickjs-opcode.h cutils.h list.h
+libregexp.o: libregexp.c libregexp.h libregexp-opcode.h cutils.h
+libunicode.o: libunicode.c libunicode.h libunicode-table.h cutils.h
+cutils.o: cutils.c cutils.h
+quickjs-libc.o: quickjs-libc.c quickjs-libc.h quickjs.h
+libbf.o: libbf.c libbf.h cutils.h
+qjs.o: qjs.c quickjs.h quickjs-libc.h
+qjsc.o: qjsc.c quickjs.h cutils.h
+
+clean:
+	rm -f $(PROGS) *.o
+
+install: $(PROGS)
+	mkdir -p $(PREFIX)/bin
+	cp qjs qjsc $(PREFIX)/bin/
+	@echo "Installed to $(PREFIX)/bin"
+
+test: qjs
+	./qjs -e 'console.log("Hello from QuickJS on PowerPC G4!")'
+	./qjs -e 'console.log("1 + 1 =", 1 + 1)'
+	./qjs -e 'console.log("AltiVec test:", [1,2,3].map(x => x * 2))'
+
+.PHONY: all clean install test
