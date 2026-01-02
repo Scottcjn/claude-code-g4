@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![PowerPC](https://img.shields.io/badge/PowerPC-G4-orange)](https://github.com/Scottcjn/claude-code-g4) [![macOS](https://img.shields.io/badge/macOS-Tiger-lightgrey)](https://github.com/Scottcjn/claude-code-g4)
+
 # Claude Code for PowerPC G4 (Mac OS X Tiger)
 
 **Running Claude Code on 20-year-old Macs!**
