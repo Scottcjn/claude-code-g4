@@ -93,3 +93,20 @@ MIT License - Free to use, but please keep the copyright notice and attribution.
 
 <!-- Analytics -->
 ![](http://50.28.86.131:9090/pixel/claude-code-g4.gif)
+
+
+## 中文简介
+
+Claude Code for PowerPC G4 - 让 Claude Code 在 2005 年的 PowerPC G4 Mac 上运行！
+
+这是首个在 Mac OS X Tiger (10.4) 上原生运行的 Claude Code 移植版本，使用 QuickJS + Python TLS。
+
+**主要特性：**
+- 在 PowerPC G4 (2005年) Mac 上运行现代 AI 助手
+- 支持 Mac OS X Tiger 10.4
+- 使用 QuickJS 引擎替代 Node.js
+- 原生 TLS 1.2 支持
+
+为复古硬件赋予现代 AI 能力！
+
+Contributed by eelaine-wzw
