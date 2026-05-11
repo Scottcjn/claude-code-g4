@@ -393,27 +393,27 @@ encoding. Return @code{null} in case of I/O error.
 Open a file (wrapper to the libc @code{fopen()}). Return the FILE
 object or @code{null} in case of I/O error. If @code{errorObj} is not
 undefined, set its @code{errno} property to the error code or to 0 if
-no error occured.
+no error occurred.
 
 @item popen(command, flags, errorObj = undefined)
 Open a process by creating a pipe (wrapper to the libc
 @code{popen()}). Return the FILE
 object or @code{null} in case of I/O error. If @code{errorObj} is not
 undefined, set its @code{errno} property to the error code or to 0 if
-no error occured.
+no error occurred.
 
 @item fdopen(fd, flags, errorObj = undefined)
 Open a file from a file handle (wrapper to the libc
 @code{fdopen()}). Return the FILE
 object or @code{null} in case of I/O error. If @code{errorObj} is not
 undefined, set its @code{errno} property to the error code or to 0 if
-no error occured.
+no error occurred.
 
 @item tmpfile(errorObj = undefined)
 Open a temporary file. Return the FILE
 object or @code{null} in case of I/O error. If @code{errorObj} is not
 undefined, set its @code{errno} property to the error code or to 0 if
-no error occured.
+no error occurred.
 
 @item puts(str)
 Equivalent to @code{std.out.puts(str)}.
