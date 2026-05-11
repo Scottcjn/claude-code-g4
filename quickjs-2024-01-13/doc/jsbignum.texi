@@ -34,7 +34,7 @@ language while being 100% backward compatible:
 @item Arbitrarily large floating point numbers (@code{BigDecimal}) in base 10 based on the proposal available at
 @url{https://github.com/littledan/proposal-bigdecimal}.
 
-@item @code{math} mode: arbitrarily large integers and floating point numbers are available by default. The integer division and power can be overloaded for example to return a fraction. The modulo operator (@code{%}) is defined as the Euclidian
+@item @code{math} mode: arbitrarily large integers and floating point numbers are available by default. The integer division and power can be overloaded for example to return a fraction. The modulo operator (@code{%}) is defined as the Euclidean
 remainder. @code{^} is an alias to the power operator
 (@code{**}). @code{^^} is used as the exclusive or operator.
 
@@ -86,7 +86,7 @@ Return @math{\lceil a/b \rceil}. @code{b = 0} raises a RangeError
 exception.
 
 @item ediv(a, b)
-Return @math{sgn(b) \lfloor a/{|b|} \rfloor} (Euclidian
+Return @math{sgn(b) \lfloor a/{|b|} \rfloor} (Euclidean
 division). @code{b = 0} raises a RangeError exception.
 
 @item tdivrem(a, b)
@@ -578,7 +578,7 @@ The following changes are made to the Javascript semantics:
 
 @item The logical xor operator is still available with the @code{^^} operator.
 
-@item The modulo operator (@code{%}) returns the Euclidian remainder (always positive) instead of the truncated remainder.
+@item The modulo operator (@code{%}) returns the Euclidean remainder (always positive) instead of the truncated remainder.
 
 @item The integer division operator can be overloaded with @code{Operators.updateBigIntOperators(dictionary)}.
 
