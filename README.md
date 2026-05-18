@@ -80,7 +80,7 @@ If this helped you, please:
 
 ## License
 
-MIT License - Free to use, but please keep the copyright notice and attribution.
+Apache License 2.0 - see [LICENSE](LICENSE) for the full terms.
 
 ---
 
