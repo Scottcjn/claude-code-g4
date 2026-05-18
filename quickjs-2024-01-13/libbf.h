@@ -170,7 +170,7 @@ static inline bf_flags_t bf_set_exp_bits(int n)
 #define BF_ST_OVERFLOW    (1 << 2)
 #define BF_ST_UNDERFLOW   (1 << 3)
 #define BF_ST_INEXACT     (1 << 4)
-/* indicate that a memory allocation error occured. NaN is returned */
+/* indicate that a memory allocation error occurred. NaN is returned */
 #define BF_ST_MEM_ERROR   (1 << 5) 
 
 #define BF_RADIX_MAX 36 /* maximum radix for bf_atof() and bf_ftoa() */
