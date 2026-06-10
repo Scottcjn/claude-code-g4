@@ -1,3 +1,6 @@
 *.tar.xz
 *.tar.gz
 *.o
+
+# 17MB mislabeled PostScript junk
+ssl
