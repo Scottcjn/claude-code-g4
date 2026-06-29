@@ -4,10 +4,16 @@
 Port of Claude Code CLI to PowerPC G4/G5 Macs running Mac OS X Tiger (10.4) and Leopard (10.5).
 
 ## Target Systems
-| System | OS | Python | RAM | Status |
-|--------|-----|--------|-----|--------|
-| Dual G4 (192.168.0.125) | Tiger 10.4.12 | 3.10 | 2GB | Primary target |
-| G5 (192.168.0.130) | Leopard 10.5.8 | 2.5.1/3.x | 6GB | Secondary |
+| System | OS | Toolchain / Python | RAM | QuickJS build | Status |
+|--------|-----|--------------------|-----|---------------|--------|
+| Dual G4 (192.168.0.125) | Tiger 10.4.12 | GCC 4.0.1 / Py 3.10 | 2GB | `Makefile.ppc` (7450) | Primary target |
+| G5 (192.168.0.130) | Leopard 10.5.8 | GCC 4.0.1 / Py 2.5 | 6GB | `Makefile.ppc.g5` (970) | Secondary |
+| G5 (192.168.0.179) | Leopard 10.5.9 | GCC 4.0.1 + GCC 10.5 / Py 2.5 | — | `Makefile.ppc.g5` ✅ verified | Build host |
+
+**Build variants:** the G4 (7450/Tiger) and G5 (970/Leopard) get separate QuickJS
+makefiles + compat headers — see [Build Commands](#build-commands). The G5 variant
+adds opt-in native 64-bit (`ABI=64`) and modern-toolchain (`GCC10=1`) knobs the
+32-bit G4 can't use.
 
 ## Architecture
 
@@ -124,6 +130,25 @@ static inline vector float altivec_dot_product(
 - Platform detection code
 
 ## Build Commands
+
+### QuickJS runtime (G4 Tiger / G5 Leopard):
+```bash
+cd quickjs-2024-01-13
+
+# G4 / Tiger 10.4 — PowerPC 7450, AltiVec, 32-bit
+make -f Makefile.ppc
+
+# G5 / Leopard 10.5 — PowerPC 970, AltiVec (default: system GCC 4.0.1, 32-bit)
+make -f Makefile.ppc.g5
+#   native 64-bit ppc64:       make -f Makefile.ppc.g5 ABI=64
+#   modern toolchain (faster): make -f Makefile.ppc.g5 CC=/usr/local/gcc-10/bin/gcc GCC10=1
+
+./qjs claude.js
+```
+
+Compat headers: `tiger_compat.h` (G4/Tiger) and `leopard_compat.h` (G5/Leopard)
+provide the `clock_gettime` shim + single-threaded atomics stubs old macOS lacks.
+`repl_stub.c` supplies empty REPL/qjscalc blobs so `qjs` links for script use.
 
 ### Python approach (Tiger G4):
 ```bash

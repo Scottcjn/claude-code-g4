@@ -1,0 +1,95 @@
+# QuickJS Makefile for PowerPC G5 (970) — Mac OS X Leopard 10.5
+# =============================================================
+# The G5/Leopard sibling of Makefile.ppc (G4/Tiger). Differences:
+#   - -mcpu=970 (G5) instead of -mcpu=7450 (G4)
+#   - targets Leopard 10.5 (the G5's OS) instead of Tiger 10.4
+#   - optional 64-bit native ppc64 (the G5 is a 64-bit chip)
+#   - optional modern toolchain with real C11 atomics
+#
+# Build on the G5 (system GCC 4.0.1, 32-bit):
+#     make -f Makefile.ppc.g5
+#
+# Native 64-bit ppc64 (showcases the G5's 64-bit core):
+#     make -f Makefile.ppc.g5 ABI=64
+#
+# With the lab's modern toolchain (real atomics, better codegen):
+#     make -f Makefile.ppc.g5 CC=/usr/local/gcc-10/bin/gcc GCC10=1
+#     # or 64-bit:  ... GCC10=1 ABI=64
+
+CC=gcc
+AR=ar
+STRIP=strip
+
+# Knobs (override on the command line)
+ABI?=32
+GCC10?=0
+
+# PowerPC G5 (970) flags — AltiVec, tuned for the 970 core
+CFLAGS=-I. -mcpu=970 -mtune=970 -maltivec -O2 -Wall -D_GNU_SOURCE
+CFLAGS+=-DCONFIG_BIGNUM
+CFLAGS+=-DCONFIG_VERSION=\"2024-01-13-ppc-g5\"
+CFLAGS+=-include leopard_compat.h
+
+# Leopard 10.5 deployment target
+CFLAGS+=-mmacosx-version-min=10.5
+LDFLAGS=-mmacosx-version-min=10.5
+
+# Native 64-bit ppc64 (opt-in; the G5 is 64-bit, the G4 is not)
+ifeq ($(ABI),64)
+CFLAGS+=-m64
+LDFLAGS+=-m64
+endif
+
+# Modern toolchain (e.g. /usr/local/gcc-10): faster codegen for the 970.
+# Uses the same atomics stubs as the system compiler (Atomics is disabled),
+# so it's purely an optimization knob.
+ifeq ($(GCC10),1)
+CFLAGS+=-funroll-loops
+endif
+
+LIBS=-lm
+
+PROGS=qjs qjsc
+
+# repl_stub.o supplies empty REPL/qjscalc blobs (their .js sources aren't shipped
+# in this repo) so qjs links and can run scripts — `qjs claude.js`.
+QJS_OBJS=qjs.o quickjs.o libregexp.o libunicode.o cutils.o quickjs-libc.o libbf.o repl_stub.o
+QJSC_OBJS=qjsc.o quickjs.o libregexp.o libunicode.o cutils.o quickjs-libc.o libbf.o
+
+all: $(PROGS)
+
+qjs: $(QJS_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(QJS_OBJS) $(LIBS)
+	@echo "Built qjs for PowerPC G5 (970), Leopard 10.5 [ABI=$(ABI) GCC10=$(GCC10)]"
+
+qjsc: $(QJSC_OBJS)
+	$(CC) $(LDFLAGS) -o $@ $(QJSC_OBJS) $(LIBS)
+	@echo "Built qjsc for PowerPC G5 (970), Leopard 10.5 [ABI=$(ABI) GCC10=$(GCC10)]"
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+# Dependencies
+quickjs.o: quickjs.c quickjs.h quickjs-atom.h quickjs-opcode.h cutils.h list.h
+libregexp.o: libregexp.c libregexp.h libregexp-opcode.h cutils.h
+libunicode.o: libunicode.c libunicode.h libunicode-table.h cutils.h
+cutils.o: cutils.c cutils.h
+quickjs-libc.o: quickjs-libc.c quickjs-libc.h quickjs.h
+libbf.o: libbf.c libbf.h cutils.h
+qjs.o: qjs.c quickjs.h quickjs-libc.h
+qjsc.o: qjsc.c quickjs.h cutils.h
+
+clean:
+	rm -f $(PROGS) *.o
+
+install: $(PROGS)
+	mkdir -p $(PREFIX)/bin
+	cp qjs qjsc $(PREFIX)/bin/
+	@echo "Installed to $(PREFIX)/bin"
+
+test: qjs
+	./qjs -e 'console.log("Hello from QuickJS on PowerPC G5!")'
+	./qjs -e 'console.log("1 + 1 =", 1 + 1)'
+	./qjs -e 'console.log("AltiVec test:", [1,2,3].map(x => x * 2))'
+
+.PHONY: all clean install test

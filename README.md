@@ -40,7 +40,7 @@ make -f Makefile.ppc
 ./qjs claude.js
 ```
 
-## Building QuickJS for Tiger
+## Building QuickJS for Tiger (G4)
 
 ```bash
 # On Tiger with Xcode 2.5
@@ -48,13 +48,36 @@ cd quickjs-2024-01-13
 make -f Makefile.ppc CC="gcc -mcpu=7450" CFLAGS="-O2"
 ```
 
+## Building QuickJS for Leopard (G5) — the G5 variant
+
+The G5 is a 64-bit PowerPC 970 with AltiVec, and Leopard (10.5) ships a newer
+userland than Tiger (Python 2.5, optional modern GCC). The G5 variant tunes for
+the 970 and targets Leopard:
+
+```bash
+# On the G5 (Leopard 10.5), system GCC 4.0.1 — the default, validated build
+cd quickjs-2024-01-13
+make -f Makefile.ppc.g5            # -mcpu=970 -maltivec, Leopard 10.5 min
+./qjs claude.js
+
+# Native 64-bit ppc64 (the G5 is 64-bit; the G4 is not):
+make -f Makefile.ppc.g5 ABI=64
+
+# With a modern toolchain (e.g. /usr/local/gcc-10) for faster codegen:
+make -f Makefile.ppc.g5 CC=/usr/local/gcc-10/bin/gcc GCC10=1
+```
+
+Variant files: `Makefile.ppc.g5`, `leopard_compat.h` (the Leopard sibling of
+`tiger_compat.h` — keeps the `clock_gettime` shim), and `repl_stub.c` (empty
+REPL/qjscalc blobs so `qjs` links for script use).
+
 ## Hardware Tested
 
-| Machine | CPU | RAM | Status |
-|---------|-----|-----|--------|
-| Power Mac G4 | Dual 1.25 GHz | 2GB | Working |
-| PowerBook G4 | 1.67 GHz | 2GB | Working |
-| Power Mac G5 | Dual 2.0 GHz | 8GB | Working |
+| Machine | CPU | OS | RAM | Status |
+|---------|-----|-----|-----|--------|
+| Power Mac G4 | Dual 1.25 GHz | Tiger 10.4 | 2GB | Working |
+| PowerBook G4 | 1.67 GHz | Tiger 10.4 | 2GB | Working |
+| Power Mac G5 | Dual 2.0 GHz | Leopard 10.5.9 | 6GB | **Working** — G5 variant build + run verified on hardware |
 
 ## Related Projects
 
