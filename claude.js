@@ -99,7 +99,10 @@ const tools = {
             if (params.replace_all)
                 content = content.split(params.old_string).join(params.new_string);
             else
-                content = content.replace(params.old_string, params.new_string);
+                // A function replacer, not a raw string, so literal "$$", "$&",
+                // "$`", "$'", "$<n>" in new_string are written byte-for-byte
+                // instead of being expanded as replacement patterns.
+                content = content.replace(params.old_string, function() { return params.new_string; });
 
             const fw = std.open(params.file_path, 'w');
             fw.puts(content);

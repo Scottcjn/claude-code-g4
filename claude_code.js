@@ -158,11 +158,13 @@ const tools = {
                 return { error: 'String not found in file: ' + oldString.substring(0, 50) };
             }
 
-            // Replace
+            // Replace. The non-replaceAll path uses a function replacer, not a raw
+            // string, so literal "$$", "$&", "$`", "$'", "$<n>" in newString are
+            // written byte-for-byte instead of being expanded as replacement patterns.
             if (replaceAll) {
                 content = content.split(oldString).join(newString);
             } else {
-                content = content.replace(oldString, newString);
+                content = content.replace(oldString, function() { return newString; });
             }
 
             // Write back
