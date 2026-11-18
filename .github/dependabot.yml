@@ -1,6 +1,6 @@
 version: 2
 updates:
-  - package-ecosystem: "npm"
+  - package-ecosystem: "bun"  # /package has bun.lock, not package-lock.json
     directory: "/package"
     schedule:
       interval: "weekly"
